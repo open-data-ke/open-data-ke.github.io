@@ -70,3 +70,14 @@ h1 {
     box-shadow: 0 0 0 1px #2684FF !important;
     outline: 1px solid #2684FF;
 }
+
+button[type=button]{
+    padding: 10px 30px;
+    background-color: white;
+    cursor: pointer;
+    border: 1px solid gray;
+    border-radius: 5px;
+    font-size: 14px;
+    text-shadow: 1px 1px #e3e3e3;
+
+}
