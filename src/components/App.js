@@ -219,7 +219,6 @@ class App extends Component {
         delete actualState.availableMines;
         delete actualState.availableLocations;
         delete actualState.visibleSections;
-        console.log(actualState);
         fetch(process.env.REACT_APP_API_URL+'/api/v1/subscriptions', {
             method: 'post',
             headers: { 
