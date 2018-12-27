@@ -17,20 +17,7 @@ class App extends Component {
         super(props);
         this.state = {
             possibleActions: [],
-            availableCountries: [
-                {
-                    key: "254",
-                    label: "Kenya"
-                },
-                {
-                    key: "255",
-                    label: "Tanzania"
-                },
-                {
-                    key: "256",
-                    label: "Uganda"
-                }
-            ],
+            availableCountries: [],
             selectedAction: undefined,
             visibleSections: { // keep these in sequential order of visibility
                 "action-select": true,
@@ -42,38 +29,33 @@ class App extends Component {
         this.onChange = this.onChange.bind(this);
         this.addPhone = this.addPhone.bind(this);
         this.handleSelect = this.handleSelect.bind(this);
+        this.addEmail = this.addEmail.bind(this);
     }
 
     componentDidMount = () => {
-        // TODO:
+        // fetch possible actions from database
+        fetch(process.env.REACT_APP_API_URL+'/api/v1/actions')
+            .then(response => response.json())
+            .then(data => {
+                const actionMapping = {
+                    id: "value",
+                    description: "label"
+                }
+                let possibleActions = renameJsonArrayItemKeys(data, actionMapping);
+                this.setState({ possibleActions });
+            });
 
-        // async fetch possible actions
-        let possibleActions = [
-            {
-                id: "a5ab36be-7d74-42b9-8c5e-6c01ddf4dd44",
-                description: "get general, open information on a mine in my country"
-            },
-            {
-                id: "65b377f3-db4a-4037-84fc-e711d7348a0d",
-                description: "look up jobs and job advertisements at my local mine"
-            },
-            {
-                id: "cac34ed3-4f04-4509-8d23-4567a2d05d83",
-                description: "submit a complaint to companies exploiting resources in my area"
-            },
-        ];
-
-        // Then: >>
-
-        // remap action keys for use in select dropdown
-        const actionMapping = {
-            id: "value",
-            description: "label"
-        }
-
-        possibleActions = renameJsonArrayItemKeys(possibleActions, actionMapping);
-
-        this.setState({ possibleActions });
+        // fetch countries from database
+        fetch(process.env.REACT_APP_API_URL+'/api/v1/countries')
+            .then(response => response.json())
+            .then(data => {
+                const countryMapping = {
+                    id: "value",
+                    name: "label"
+                }
+                let availableCountries = renameJsonArrayItemKeys(data, countryMapping);
+                this.setState({ availableCountries });
+        });
     }
 
     showHiddenSection = async (sectionToShow) => {
@@ -85,35 +67,20 @@ class App extends Component {
         await visibleSections;
     }
 
-    listAvailableCountries = async () => {
-        // async fetch available countries
-        let availableCountries = [
-            {
-                code: "254",
-                name: "Kenya"
-            },
-            {
-                code: "255",
-                name: "Tanzania"
-            },
-            {
-                code: "256",
-                name: "Uganda"
-            },
-        ];
-
-        // Then: >>
-
-        // remap country keys for use in select dropdown
-        const countryMapping = {
-            code: "value",
-            name: "label"
+    addPhone = (e) => {
+        if(e.key === 'Enter') {
+            this.setState({
+                visibleSections: { // keep these in sequential order of visibility
+                    "action-select": true,
+                    "phone-email": true,
+                    "country-select": true,
+                    "buttons": false
+                }
+            });
         }
-
-        await renameJsonArrayItemKeys(availableCountries, countryMapping);
     }
 
-    addPhone = (e) => {
+    addEmail = (e) => {
         if(e.key === 'Enter') {
             this.setState({
                 visibleSections: { // keep these in sequential order of visibility
@@ -139,16 +106,14 @@ class App extends Component {
     }
 
     onChange = (e) => {
-        if(e.value === 'a5ab36be-7d74-42b9-8c5e-6c01ddf4dd44' || e.value === '65b377f3-db4a-4037-84fc-e711d7348a0d' || e.value==='cac34ed3-4f04-4509-8d23-4567a2d05d83'){
-            this.setState({
-                visibleSections: { // keep these in sequential order of visibility
-                    "action-select": true,
-                    "phone-email": true,
-                    "country-select": false,
-                    "buttons": false
-                }
-            });
-        }
+        this.setState({
+            visibleSections: { // keep these in sequential order of visibility
+                "action-select": true,
+                "phone-email": true,
+                "country-select": false,
+                "buttons": false
+            }
+        });
         return;
         const fieldId = e.target.getAttribute("id");
         const value = e.selection.getAttribute("value");
@@ -230,7 +195,8 @@ class App extends Component {
                         visibleSections["phone-email"] ?
                         <div className="stage phone-email">
                             <h4>Enter Phone / Email</h4>
-                            <input type="text" name="phoneOrEmail" onKeyPress={this.addPhone}/>
+                            <input type="text" name="phone" onKeyPress={this.addPhone} placeholder="enter phone"/>
+                            <input type="email" name="email" onKeyPress={this.addEmail} placeholder="enter email"/>
                         </div> :
                         <span className="hidden"></span>
                     }
