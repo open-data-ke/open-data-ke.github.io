@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
+import './select.css';
 
 export default class Select extends Component {
-    renderItems = (item, mapping) => <li key={item[mapping.key]}>{item[mapping.value]}</li>;
+    renderItems = (item, mapping) => <li key={item[mapping.key]} style={{color: red}}>{item[mapping.value]}</li>;
 
     render() {
         const { listItems, mapping } = this.props;

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import App from '../App';
 
 export default class Homepage extends Component {
   render() {
@@ -63,7 +64,7 @@ export default class Homepage extends Component {
               <p className="sub-p">We Promise to never span you.</p>
             </div>
           </section>
-          <section Style="marginBottom:30px;">
+          <section style={{marginBottom:'30px'}}>
             <div className="container">
               <div className="row bort text-center">
                 <div className="social">
@@ -87,9 +88,11 @@ export default class Homepage extends Component {
               <div className="row">
                 <div className="col-md-6">
                   <div className="contact-title">
-                    <i className="fa fa-envelope"></i>
+                  {/*<i className="fa fa-envelope"></i>
                     <h2>Get in touch</h2>
                     <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor <br/>incididunt ut labore et dolore magna aliqua.</p>
+                    */}
+                    <App/>
                   </div>
                 </div>
                 <div className="contact col-md-6 wow fadeIn delay-08s">
@@ -127,7 +130,7 @@ export default class Homepage extends Component {
           <div className="container">
             <div className="row bort">
 
-              <div className="copyright" Style="fontFamily:sans-serif">
+              <div className="copyright" style={{fontFamily:'sans-serif'}}>
                 © Copyright Extractive Mining Oil and Gas. All rights reserved.
                 <div className="credits">
                   Designed by <a href="/">Extractive Informations</a>

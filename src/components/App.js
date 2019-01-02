@@ -24,8 +24,9 @@ class App extends Component {
       selectedMine: '',
       phone: '',
       email: '',
+      wizardButtons: true,
       visibleSections: { // keep these in sequential order of visibility
-        "action-select": true,
+        "actionSelect": true,
         "phone": false,
         "email": false,
         "country-select": false,
@@ -35,17 +36,36 @@ class App extends Component {
       }
     }
     this.onChange = this.onChange.bind(this);
-    this.addPhone = this.addPhone.bind(this);
     this.handleSelect = this.handleSelect.bind(this);
-    this.addEmail = this.addEmail.bind(this);
     this.handleLocationSelect = this.handleLocationSelect.bind(this);
     this.handleMineSelect = this.handleMineSelect.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleNext = (e) => {
-    if(this.state.visibleSections.actionSelect && this.state.selectedAction !== null) {
-      this.onChange(e);
+  handleNext = () => {
+    if(this.state.visibleSections.actionSelect && this.state.selectedAction !== '') {
+      this.setState({
+        visibleSections: {
+          "actionSelect": false,
+          "phone": true,
+          "email": true,
+          "country-select": false,
+          "location-select": false,
+          "buttons": false
+        }
+      });
+    }
+    if(this.state.visibleSections.phone && this.state.email !== null && this.state.phone !==null) {
+      this.setState({
+        visibleSections: {
+          "actionSelect": false,
+          "phone": false,
+          "email": false,
+          "country-select": true,
+          "location-select": false,
+          "buttons": false
+        }
+      });
     }
   }
 
@@ -78,45 +98,13 @@ class App extends Component {
       });
   }
 
-  addPhone = (e) => {
-    if(e.key === 'Enter') {
-      this.setState({
-        visibleSections: { // keep these in sequential order of visibility
-          "action-select": true,
-          "phone": true,
-          "email": true,
-          "country-select": false,
-          "location-select": false,
-          "mines-select": false,
-          "buttons": false
-        }
-      });
-    }
-  }
-
-  addEmail = (e) => {
-    if(e.key === 'Enter') {
-      this.setState({
-        visibleSections: { // keep these in sequential order of visibility
-          "action-select": true,
-          "phone": true,
-          "email": true,
-          "country-select": true,
-          "location-select": false,
-          "mines-select": false,
-          "buttons": false
-        }
-      });
-    }
-  }
-
   handleSelect = (e) => {
     // console.log(e);
     this.setState({
       visibleSections: { // keep these in sequential order of visibility
-        "action-select": true,
-        "phone": true,
-        "email": true,
+        "actionSelect": false,
+        "phone": false,
+        "email": false,
         "country-select": true,
         "location-select": false,
         "mines-select": false,
@@ -139,9 +127,9 @@ class App extends Component {
         let availableLocations = renameJsonArrayItemKeys(data, locationMapping);
         this.setState({ 
           visibleSections: { // keep these in sequential order of visibility
-            "action-select": true,
-            "phone": true,
-            "email": true,
+            "actionSelect": false,
+            "phone": false,
+            "email": false,
             "country-select": true,
             "location-select": true,
             "mines-select": false,
@@ -171,9 +159,9 @@ class App extends Component {
         let availableMines = renameJsonArrayItemKeys(data, minesMapping);
         this.setState({ 
           visibleSections: { // keep these in sequential order of visibility
-            "action-select": true,
-            "phone": true,
-            "email": true,
+            "actionSelect": false,
+            "phone": false,
+            "email": false,
             "country-select": true,
             "location-select": true,
             "mines-select": true,
@@ -195,27 +183,20 @@ class App extends Component {
   setButtonVisibility(){
     this.setState({
       visibleSections: { // keep these in sequential order of visibility
-        "action-select": true,
-        "phone": true,
-        "email": true,
+        "actionSelect": false,
+        "phone": false,
+        "email": false,
         "country-select": true,
         "location-select": true,
         "mines-select": true,
         "buttons": true
       },
+      wizardButtons: false,
     });
   }
 
   onChange = (e) => {
     this.setState({
-      visibleSections: {
-        "action-select": true,
-        "phone": true,
-        "email": false,
-        "country-select": false,
-        "location-selecte": false,
-        "buttons": false
-      },
       selectedAction: e._id,
     });
   }
@@ -242,15 +223,14 @@ class App extends Component {
     return (
         <div className="main">
         <div className="banner">
-        <h1>MYNR</h1>
-        <p>local resource</p>
+        <h1>EIMOG</h1>
         <hr/>
         </div>
 
         <div className="torso">
         {
-          visibleSections["action-select" ]?
-            <div className="stage action-select">
+          visibleSections["actionSelect" ]?
+            <div className="stage actionSelect">
             <h4>I want to ...</h4>
             <Select options={possibleActions}
           isSearchable="true"
@@ -263,18 +243,18 @@ class App extends Component {
             <span className="hidden"></span>
         }
     {
-      visibleSections["phone"] ?
+      visibleSections["email"] ?
         <div className="stage phone-email">
-        <h4>Enter Phone</h4>
-        <input type="text" name="phone" onKeyPress={this.addPhone} onChange={e=>this.setState({phone: e.target.value})} placeholder="enter phone"/>
+        <h4>Enter Email</h4>
+        <input className="form-control" type="email" name="email" onChange={e=>this.setState({email: e.target.value})} placeholder="enter email" style={{ padding:'5px' }}/>
         </div> :
         <span className="hidden"></span>
     }
     {
-      visibleSections["email"] ?
+      visibleSections["phone"] ?
         <div className="stage phone-email">
-        <h4>Enter Email</h4>
-        <input type="email" name="email" onKeyPress={this.addEmail} onChange={e=>this.setState({email: e.target.value})} placeholder="enter email"/>
+        <h4>Enter Phone</h4>
+        <input type="text" name="phone" className="form-control" onChange={e=>this.setState({phone: e.target.value})} placeholder="enter phone" style={{ padding:'5px' }}/>
         </div> :
         <span className="hidden"></span>
     }
@@ -323,9 +303,13 @@ class App extends Component {
     }                    
     </div>
       <div className="footer"></div>
-      <button className="btn prev" onClick={this.handlePrev}>Prev</button> 
-      <button className="btn next" onClick={this.handleNext}>Next</button>
-      </div>
+      { this.state.wizardButtons &&
+        <div>
+          <button className="btn prev" onClick={this.handlePrev}>Prev</button> 
+          <button className="btn next" onClick={this.handleNext}>Next</button>
+        </div>
+      }
+    </div>
       );
   }
 } export default App;
